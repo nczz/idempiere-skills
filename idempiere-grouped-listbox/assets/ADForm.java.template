@@ -1,0 +1,67 @@
+package ${package};
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.adempiere.webui.panel.ADForm;
+import org.compiere.util.Env;
+import org.compiere.util.Msg;
+import org.idempiere.ui.zk.annotation.Form;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listhead;
+import org.zkoss.zul.Listheader;
+import org.zkoss.zul.Vlayout;
+
+@Form
+public class ${className} extends ADForm {
+
+	private static final long serialVersionUID = 1L;
+
+	private Listbox listbox = null;
+	
+	public ${className}() {
+	}
+
+	@Override
+	protected void initForm() {
+		Vlayout layout = new Vlayout();
+		appendChild(layout);
+		layout.setHeight("100%");
+		layout.setWidth("100%");
+		
+		listbox = new Listbox();
+		layout.appendChild(listbox);
+		listbox.setVflex(true);
+		listbox.setHflex("1");
+		
+		Listhead listhead = listbox.getListhead();
+		if (listhead == null) {
+			listhead = new Listhead();
+			listbox.appendChild(listhead);
+		} else {
+			listhead.getChildren().clear();
+		}
+		listhead.setSizable(true);		
+		
+		// Add Listheaders
+		Listheader header = new Listheader();
+		listhead.appendChild(header);
+		header.setLabel("Column 1");
+		
+		${rendererClassName} renderer = new ${rendererClassName}();
+		listbox.setItemRenderer(renderer);
+		listbox.setModel(createGroupModel());
+	}
+
+	protected ${modelClassName} createGroupModel() {
+		// Implement data fetching and model creation
+		List<List<${dataType}>> groupData = new ArrayList<>();
+		List<${headType}> groupHeads = new ArrayList<>();
+		List<${footType}> groupFoots = new ArrayList<>();
+		
+		${modelClassName} groupModel = new ${modelClassName}(groupData, groupHeads, groupFoots);
+		groupModel.setMultiple(true);
+		groupModel.setGroupSelectable(true);
+		return groupModel;
+	}
+}

@@ -1,0 +1,13 @@
+package ${package};
+
+import java.util.List;
+import org.zkoss.zul.SimpleGroupsModel;
+
+public class ${className} extends SimpleGroupsModel<${dataType}, ${headType}, ${footType}, Object> {
+
+	private static final long serialVersionUID = 1L;
+	
+	public ${className}(List<List<${dataType}>> data, List<${headType}> heads, List<${footType}> foots) {
+		super(data, heads, foots);
+	}
+}

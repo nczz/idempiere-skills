@@ -1,0 +1,41 @@
+package ${package};
+
+import org.adempiere.webui.component.Label;
+import org.adempiere.webui.listbox.renderer.AbstractGroupListitemRenderer;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+
+public class ${className} extends AbstractGroupListitemRenderer<Object> {
+
+	@Override
+	public int getColumnCount() {
+		return ${columnCount};
+	}
+
+	@Override
+	public String getGroupHeaderTitle(Object data) {	
+		${headType} groupHead = (${headType}) data;
+		// Return group header title
+		return groupHead.toString();
+	}
+
+	@Override
+	public void renderGroupfoot(Listitem item, Object data, int index) {
+		${footType} groupFoot = (${footType}) data;
+		// Render group footer
+		Listcell cell = new Listcell();
+		cell.setSpan(getColumnCount());
+		cell.appendChild(new Label("Footer: " + groupFoot.toString()));
+		item.appendChild(cell);
+	}
+
+	@Override
+	public void renderListitem(Listitem item, Object data, int index) {
+		${dataType} record = (${dataType}) data;
+		// Render record
+		Listcell cell = new Listcell();
+		cell.appendChild(new Label(record.toString()));
+		item.appendChild(cell);
+	}
+
+}

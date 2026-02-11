@@ -1,0 +1,26 @@
+package ${package_name};
+
+import org.adempiere.base.annotation.Parameter;
+import org.adempiere.base.annotation.Process;
+import org.compiere.process.SvrProcess;
+
+@Process
+public class ${process_class_name} extends SvrProcess {
+
+	@Parameter
+	private int ${parameter_name};
+	
+	public ${process_class_name}() {
+	}
+
+	@Override
+	protected void prepare() {
+	}
+
+	@Override
+	protected String doIt() throws Exception {
+		// Implement process logic
+		return "@Ok@";
+	}
+
+}
