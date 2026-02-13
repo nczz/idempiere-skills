@@ -16,6 +16,7 @@ This repository contains a collection of skills for the [Gemini CLI](https://git
 | `idempiere-window-validator` | Orchestrates the creation of iDempiere WindowValidator OSGi service components. Use when you need to add custom validation logic to an iDempiere window using the `WindowValidator` interface. |
 | `idempiere-wlistbox-custom-editor` | Instructions for using a custom `WEditor` for a `WListbox` (`WTableColumn`) in iDempiere ZK web UI. Use when you need to customize the rendering or editing behavior of a specific column in a `WListbox`. |
 | `idempiere-zul-form` | Orchestrates the creation of custom forms in iDempiere using the ZK web UI framework, leveraging annotations and the `IMappedFormFactory` for automatic registration. |
+| `idempiere-mapped-model-factory-service` | Orchestrates the use of iDempiere IMappedModelFactory service to scan annotated mnodel classes. |
 
 ## Gemini CLI Installation Instruction
 
@@ -46,6 +47,7 @@ To use these skills, you need to have the Gemini CLI installed.
    gemini skills install https://github.com/hengsin/idempiere-skills.git --path idempiere-window-validator
    gemini skills install https://github.com/hengsin/idempiere-skills.git --path idempiere-wlistbox-custom-editor
    gemini skills install https://github.com/hengsin/idempiere-skills.git --path idempiere-zul-form
+   gemini skills install https://github.com/hengsin/idempiere-skills.git --path idempiere-mapped-model-factory-service
    ```
 
 ## Usage
