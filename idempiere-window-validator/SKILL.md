@@ -13,7 +13,7 @@ This skill guides the creation of `WindowValidator` implementations in iDempiere
 
 ### 1. Define the Java Component
 
-Create a Java class that implements `org.adempiere.webui.adwindow.validator.WindowValidator`. Use OSGi Declarative Services annotations to register it.
+- Create a Java class that implements `org.adempiere.webui.adwindow.validator.WindowValidator`. Use OSGi Declarative Services annotations to register it.
 
 ```java
 @Component(
@@ -32,7 +32,7 @@ public class MyWindowValidator implements WindowValidator {
     }
 }
 ```
-
+- **Verification**: If idempiere get_record and search_records tool is available, verify AD_Window_UU against AD_Window.
 ### 2. Available Events
 
 - `beforeProcess`: Triggered before a process button is executed.
