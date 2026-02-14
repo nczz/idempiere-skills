@@ -46,3 +46,22 @@ Delegates are classes that perform the actual work when an event occurs. They mu
 - Use the correct base class to gain access to helper methods and context (e.g., `getModel()` in `ModelEventDelegate`).
 - Ensure the package containing delegates is registered in your `AnnotationBasedEventManager`.
 - Delegates are instantiated per event, so they are thread-safe by design for state held within the instance.
+
+## Constraints & Validation (Gemini CLI)
+- **Path Awareness**: Always use the `ls` or `search` tools to confirm that the `modelClass` defined in `@ModelEventTopic` exists in the source tree before generating code.
+- **Contextual Search**: Check the root directory and any paths displayed in `/directory show`.
+- **Validation Rule**: If `modelClass = MOrder.class` is requested, verify `**/MOrder.java` exists.
+
+## Constraints & Validation (Antigravity/VSCode Context)
+
+### 1. Workspace Awareness
+- **Context Source**: The user is running inside the Antigravity IDE. 
+- **Rule**: Before generating code, use the `ls -R` or `find` command to locate the `modelClass` file (e.g., `MOrder.java`) within the current workspace.
+- **Verification**: 
+    - If the file is open in the editor (visible via IDE context), accept it immediately.
+    - If not open, search the `./src` or `./base` directories.
+    - **FAILURE CONDITION**: If `modelClass` cannot be found in the file system, STOP and ask the user to provide the full package name or add the correct directory via `/directory add`.
+
+### 2. Classpath Check
+- **Constraint**: Do not assume standard iDempiere packages (like `org.compiere.model`).
+- **Action**: If the `modelClass` is an interface (starts with `I_`), verify that the corresponding implementation class also exists or is available in the target platform.
