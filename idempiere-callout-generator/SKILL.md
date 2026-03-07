@@ -1,16 +1,18 @@
 ---
 name: idempiere-callout-generator
-description: Generates iDempiere column callouts and callout factories based on annotation templates. Use when the user wants to create a new callout for a database column or a new callout factory in an iDempiere OSGi bundle.
+description: Generates iDempiere column callouts and callout factories based on annotation templates. 
+Use to create a new callout for a database column or a new callout factory in an iDempiere OSGi bundle.
 ---
 
 # iDempiere Callout Generator
 
 ## Overview
-This skill automates the creation of iDempiere column callouts and their associated factories using annotations. It uses predefined templates to ensure consistency and adherence to iDempiere development standards.
+This skill automates the creation of iDempiere column callouts and their associated factories using annotations. 
+It uses predefined templates to ensure consistency and adherence to iDempiere development standards.
 
 ## Workflow
 1. **Identify the Target**: Determine the table name and column name for the callout. 
-**Verification**: If idempiere get_record and search_records tool is available, verify table name and column name against AD_Table and AD_Column.
+**Verification**: If idempiere_model_get_record and idempiere_model_search_records tool is available, verify table name and column name against AD_Table and AD_Column.
 **STOP** if verification fail.
 2. **Generate Callout**: Use `assets/CalloutTemplate.java` as a base to create a new `IColumnCallout` implementation.
    - Update the `@Callout` annotation with the correct `tableName` and `columnName`.

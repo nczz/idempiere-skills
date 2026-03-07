@@ -1,6 +1,7 @@
 ---
 name: idempiere-annotation-process
-description: Orchestrates the creation of iDempiere Annotation-based Processes and Factories. Use when you need to create a new process in iDempiere using the annotation-based approach.
+description: Orchestrates the creation of iDempiere Annotation-based Processes and Factories. 
+Use to create a new process in iDempiere using the annotation-based approach.
 ---
 
 # iDempiere Annotation-based Process

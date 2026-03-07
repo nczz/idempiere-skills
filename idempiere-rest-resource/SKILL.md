@@ -1,6 +1,7 @@
 ---
 name: idempiere-rest-resource
-description: Orchestrates the creation of iDempiere REST resource extensions. Use when you need to add custom REST endpoints to iDempiere using the ResourceExtension interface and JAX-RS annotations.
+description: Orchestrates the creation of iDempiere REST resource extensions. 
+Use when you need to add custom REST endpoints to iDempiere using the ResourceExtension interface and JAX-RS annotations.
 ---
 
 # iDempiere REST Resource Extension

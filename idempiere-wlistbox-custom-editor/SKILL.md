@@ -1,6 +1,7 @@
 ---
 name: idempiere-wlistbox-custom-editor
-description: Instructions for using a custom WEditor for a WListbox (WTableColumn) in iDempiere ZK web UI. Use when you need to customize the rendering or editing behavior of a specific column in a WListbox.
+description: Instructions for using a custom WEditor for a WListbox (WTableColumn) in iDempiere ZK web UI. 
+Use when you need to customize the rendering or editing behavior of a specific column in a WListbox.
 ---
 
 # iDempiere WListbox Custom Editor
@@ -17,7 +18,7 @@ This skill provides guidance on how to inject a custom `WEditor` into a `WListbo
 
 ## Example
 
-See [references/CustomAllocationForm.java](references/CustomAllocationForm.java) for a concrete example of customizing a column in the Allocation form to change text color based on the value.
+See [assets/CustomAllocationForm.java](assets/CustomAllocationForm.java) for a concrete example of customizing a column in the Allocation form to change text color based on the value.
 
 ## Key Classes
 - `org.adempiere.webui.component.WListbox`

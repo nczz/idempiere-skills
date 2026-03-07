@@ -1,6 +1,7 @@
 ---
 name: idempiere-window-validator
-description: Orchestrates the creation of iDempiere WindowValidator OSGi service components. Use when you need to add custom validation logic to an iDempiere window using the WindowValidator interface, such as before processing a button or before a document action.
+description: Orchestrates the creation of iDempiere WindowValidator OSGi service components. 
+Use when you need to add custom validation logic to an iDempiere window using the WindowValidator interface, such as before processing a button or before a document action.
 ---
 
 # Idempiere Window Validator
@@ -32,7 +33,7 @@ public class MyWindowValidator implements WindowValidator {
     }
 }
 ```
-- **Verification**: If idempiere get_record and search_records tool is available, verify AD_Window_UU against AD_Window.
+- **Input and Verification**: Use idempiere_window_list_windows to find and verify AD_Window_UU value.
 ### 2. Available Events
 
 - `beforeProcess`: Triggered before a process button is executed.

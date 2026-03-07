@@ -125,6 +125,11 @@ public class ${yourFormClassName} extends CustomForm {
 	}
 }
 ```
+## Example
+- `assets/MyActivator.java`: Example for using IMappedFormFactory service.
+- `assets/AllocationForm.java`: Example for CustomForm, use of `@Wire` annotation and instantiation of ZK form component from class path ZUL file resources.
+- `assets/AllocationFormController.java`: Example for form controller (IFormController) and the use of `@Listen` annotation.
+- `assets/*.zul`: Example ZUL files for the ZK form component.
 
 ## Best Practices
 

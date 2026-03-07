@@ -1,6 +1,7 @@
 ---
 name: idempiere-grouped-listbox
-description: Orchestrates the creation of iDempiere Annotation-based Forms with Grouped Listboxes. Use when you need to create a new form in iDempiere that displays grouped data in a ZK Listbox.
+description: Orchestrates the creation of iDempiere Annotation-based Forms with Grouped Listboxes. 
+Use when you need to create a new form in iDempiere that displays grouped data in a ZK Listbox.
 ---
 
 # iDempiere Grouped Listbox Form

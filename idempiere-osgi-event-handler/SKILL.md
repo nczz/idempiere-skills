@@ -1,6 +1,7 @@
 ---
 name: idempiere-osgi-event-handler
-description: Orchestrates the creation of iDempiere OSGi component-based event handlers. Use when you need to create a new event handler for iDempiere tables using the standard AbstractEventHandler and OSGi component pattern.
+description: Orchestrates the creation of iDempiere OSGi component-based event handlers. 
+Use when you need to create a new event handler for iDempiere tables using the standard AbstractEventHandler and OSGi component pattern.
 ---
 
 # iDempiere OSGi Event Handler Skill

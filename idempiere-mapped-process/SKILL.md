@@ -1,6 +1,7 @@
 ---
 name: idempiere-mapped-process
-description: Orchestrates the creation of iDempiere Annotation-based Processes and Factories. Use when you need to create a new process in iDempiere using the annotation-based approach with IMappedProcessFactory.
+description: Orchestrates the creation of iDempiere Annotation-based Processes and Factories. 
+Use when you need to create a new process in iDempiere using the annotation-based approach with IMappedProcessFactory.
 ---
 
 # iDempiere Mapped Process Skill

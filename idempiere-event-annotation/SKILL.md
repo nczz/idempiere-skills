@@ -1,11 +1,12 @@
 ---
 name: idempiere-event-annotation
-description: Orchestrates the creation of iDempiere Annotation-based Event Managers and Delegates. Use when you need to handle iDempiere events (Model events, Document events, Login events) using the annotation-based approach.
+description: Orchestrates the creation of iDempiere Annotation-based Event Delegates. 
+Use when you need to handle iDempiere events (Model events, Document events, Login events) using the annotation-based approach.
 ---
 
-# iDempiere Annotation-based Event Management
+# iDempiere Annotation-based Event Handling
 
-This skill provides templates and guidance for implementing event handlers in iDempiere using annotations.
+This skill provides templates and guidance for implementing event delegates in iDempiere using annotations.
 
 ## Workflows
 

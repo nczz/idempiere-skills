@@ -1,6 +1,6 @@
 ---
 name: idempiere-mapped-model-factory-service
-description: Orchestrates the use of iDempiere IMappedModelFactory service to scan annotated mnodel classes.
+description: Orchestrates the use of iDempiere IMappedModelFactory service to scan annotated model classes.
 ---
 
 # iDempiere Mapped Model Factory Service Skill
