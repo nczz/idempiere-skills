@@ -1,0 +1,119 @@
+package ${package};
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+
+import org.adempiere.webui.panel.ADForm;
+import org.adempiere.webui.panel.IFormController;
+import org.compiere.util.CLogger;
+import org.compiere.util.Env;
+import org.idempiere.ui.zk.annotation.Form;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.util.Clients;
+
+/**
+ * ZK FormController that obtains a REST JWT token from the current session
+ * and passes it to an embedded SPA iframe. Includes postMessage bridge for
+ * automatic token refresh.
+ *
+ * Requires: idempiere-session-token servlet deployed at /${contextPath}/token
+ */
+@Form
+public class ${className} implements IFormController {
+
+	private static final CLogger log = CLogger.getCLogger(${className}.class);
+	private ${formClass} form;
+
+	public ${className}() {
+		form = new ${formClass}();
+		String token = requestToken();
+		if (token != null) {
+			form.loadSpa(token);
+			setupTokenRefreshBridge();
+		} else {
+			Clients.showNotification("Unable to obtain API Token",
+					Clients.NOTIFICATION_TYPE_ERROR, null, null, 5000);
+		}
+	}
+
+	@Override
+	public ADForm getForm() {
+		return form;
+	}
+
+	private String requestToken() {
+		try {
+			int sessionId = Env.getContextAsInt(Env.getCtx(), "#AD_Session_ID");
+			if (sessionId <= 0) return null;
+			String response = httpPost(
+					"http://localhost:8080/${contextPath}/token",
+					"{\"sessionId\":" + sessionId + "}");
+			return extractJsonValue(response, "token");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Token request failed", e);
+			return null;
+		}
+	}
+
+	/**
+	 * postMessage bridge: SPA sends {type:'refresh-token'} when token expires,
+	 * ZK Form obtains a new token and sends it back via {type:'token-refreshed',token:'...'}.
+	 */
+	private void setupTokenRefreshBridge() {
+		String script =
+			"(function(){window.addEventListener('message',function(e){" +
+			"if(e.data&&e.data.type==='refresh-token'){" +
+			"zAu.send(new zk.Event(zk.Widget.$('#" + form.getIframe().getUuid() + "'),'onTokenRefresh',null));" +
+			"}});})();";
+		Clients.evalJavaScript(script);
+
+		form.getIframe().addEventListener("onTokenRefresh", new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) {
+				String newToken = requestToken();
+				if (newToken != null) {
+					Clients.evalJavaScript(String.format(
+						"var f=document.getElementById('%s');" +
+						"if(f&&f.contentWindow)f.contentWindow.postMessage({type:'token-refreshed',token:'%s'},'*');",
+						form.getIframe().getUuid(), newToken));
+				}
+			}
+		});
+	}
+
+	private String httpPost(String urlStr, String jsonBody) throws Exception {
+		URL url = new URL(urlStr);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/json");
+		conn.setConnectTimeout(5000);
+		conn.setReadTimeout(5000);
+		conn.setDoOutput(true);
+		try (OutputStream os = conn.getOutputStream()) {
+			os.write(jsonBody.getBytes(StandardCharsets.UTF_8));
+		}
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = br.readLine()) != null) sb.append(line);
+			return sb.toString();
+		}
+	}
+
+	private String extractJsonValue(String json, String key) {
+		if (json == null) return null;
+		String search = "\"" + key + "\":\"";
+		int start = json.indexOf(search);
+		if (start < 0) return null;
+		start += search.length();
+		int end = json.indexOf("\"", start);
+		return end > start ? json.substring(start, end) : null;
+	}
+}

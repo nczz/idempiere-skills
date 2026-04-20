@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <bundle id="${pluginArtifactId}" version="${bundleVersion}.qualifier">
+      <category name="${categoryName}"/>
+   </bundle>
+   <category-def name="${categoryName}" label="${categoryLabel}"/>
+</site>

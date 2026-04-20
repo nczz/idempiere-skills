@@ -137,3 +137,37 @@ public class ${yourFormClassName} extends CustomForm {
 - **Wiring**: Use `Selectors.wireComponents` for `@Wire` fields and `Selectors.wireEventListeners` for `@Listen` methods.
 - **Class Loader**: Always wrap `Executions.createComponents` with the context class loader switch to ensure ZK can find your custom components and resources.
 - **Separation of Concerns**: Keep UI wiring and structure in the `CustomForm` class and business logic/event handling in the `IFormController` class.
+
+## Iframe SPA Pattern
+
+When embedding a full SPA (e.g. FullCalendar, React app) inside a ZK Form via `<iframe>`:
+
+1. **Token bridging**: The SPA needs a REST API token. Use the `idempiere-session-token` skill to exchange the current `AD_Session_ID` for a JWT — no service account needed.
+2. **WAB deployment**: If the SPA needs custom server-side endpoints (e.g. token servlet), deploy the bundle as a WAB. See the `idempiere-wab-servlet` skill for the required MANIFEST headers (`Jetty-Environment: ee8` is critical).
+3. **Token refresh**: Use `postMessage` bridge between the ZK Form and the iframe SPA for transparent token renewal. See `idempiere-session-token` FormController template.
+
+### ❌ `Executions.getCurrent()` NPE in ZK Form
+**Symptom**: `NullPointerException` when adding form to favorites or during serialization.
+**Cause**: `Executions.getCurrent()` returns null outside normal ZK execution context (favorites, background tasks).
+**Fix**: Build the full URL in the **FormController constructor** (runs during user menu click — safe context), then pass the complete URL string to the Form. Never call `Executions.getCurrent()` inside the Form class itself.
+
+```java
+// ✅ In FormController constructor (safe — runs on menu click)
+String base = Executions.getCurrent().getScheme() + "://"
+    + Executions.getCurrent().getServerName() + ":"
+    + Executions.getCurrent().getServerPort();
+form.loadSpa(base + "/appointment/web/appointments/index.html#token=" + token);
+
+// ❌ In Form.loadSpa() — may be called outside execution context
+Executions.getCurrent().getScheme()  // NPE!
+```
+
+### ❌ ZK iframe path resolution
+ZK iframe `src` is resolved relative to the `/webui/` context. All path styles except full URL get mangled:
+
+| Syntax | Resolves to | Issue |
+|--------|------------|-------|
+| `~./path` | `/{WAB-context}/path` | Not `/webui/` |
+| `/path` | `/webui/path` | ZK adds prefix |
+| `path` | `/webui/path` | Relative to ZK context |
+| **`http://host:port/path`** | **Correct** | **Build in Controller, pass to Form** |

@@ -1,0 +1,118 @@
+package ${package};
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Base64;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.compiere.model.MSysConfig;
+import org.compiere.util.DB;
+
+/**
+ * Exchanges a valid AD_Session_ID for a JWT token.
+ * Signs using the same HMAC-SHA512 secret as the iDempiere REST API.
+ * No dependency on com.auth0.jwt — uses standard Java crypto.
+ */
+public class ${className} extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		resp.setContentType("application/json; charset=UTF-8");
+		PrintWriter out = resp.getWriter();
+
+		StringBuilder body = new StringBuilder();
+		req.getReader().lines().forEach(body::append);
+		int sessionId = parseSessionId(body.toString());
+		if (sessionId <= 0) {
+			resp.setStatus(400);
+			out.print("{\"error\":\"Missing sessionId\"}");
+			return;
+		}
+
+		String sql = "SELECT s.CreatedBy, s.AD_Client_ID, s.AD_Role_ID, s.AD_Org_ID, "
+				+ "u.Name AS UserName, oi.M_Warehouse_ID "
+				+ "FROM AD_Session s "
+				+ "JOIN AD_User u ON u.AD_User_ID = s.CreatedBy "
+				+ "LEFT JOIN AD_OrgInfo oi ON oi.AD_Org_ID = s.AD_Org_ID "
+				+ "WHERE s.AD_Session_ID = ? AND s.IsActive = 'Y' AND s.Processed = 'N'";
+
+		try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+			pstmt.setInt(1, sessionId);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (!rs.next()) {
+					resp.setStatus(401);
+					out.print("{\"error\":\"Invalid or expired session\"}");
+					return;
+				}
+				String token = createJwt(
+						rs.getString("UserName"),
+						rs.getInt("AD_Client_ID"),
+						rs.getInt("CreatedBy"),
+						rs.getInt("AD_Role_ID"),
+						rs.getInt("AD_Org_ID"),
+						rs.getInt("M_Warehouse_ID"),
+						sessionId);
+				out.print("{\"token\":\"" + token + "\"}");
+			}
+		} catch (Exception e) {
+			resp.setStatus(500);
+			out.print("{\"error\":\"" + e.getMessage().replace("\"", "'") + "\"}");
+		}
+	}
+
+	private String createJwt(String sub, int clientId, int userId, int roleId,
+			int orgId, int warehouseId, int sessionId) throws Exception {
+		String header = "{\"alg\":\"HS512\",\"typ\":\"JWT\",\"kid\":\"idempiere\"}";
+
+		long exp = (System.currentTimeMillis() / 1000) + 3600;
+		StringBuilder payload = new StringBuilder();
+		payload.append("{\"sub\":\"").append(sub).append("\"");
+		payload.append(",\"AD_Client_ID\":").append(clientId);
+		payload.append(",\"AD_User_ID\":").append(userId);
+		payload.append(",\"AD_Role_ID\":").append(roleId);
+		payload.append(",\"AD_Org_ID\":").append(orgId);
+		if (warehouseId > 0)
+			payload.append(",\"M_Warehouse_ID\":").append(warehouseId);
+		payload.append(",\"AD_Language\":\"zh_TW\"");
+		payload.append(",\"AD_Session_ID\":").append(sessionId);
+		payload.append(",\"iss\":\"idempiere.org\"");
+		payload.append(",\"exp\":").append(exp);
+		payload.append("}");
+
+		Base64.Encoder enc = Base64.getUrlEncoder().withoutPadding();
+		String h = enc.encodeToString(header.getBytes(StandardCharsets.UTF_8));
+		String p = enc.encodeToString(payload.toString().getBytes(StandardCharsets.UTF_8));
+		String data = h + "." + p;
+
+		String secret = MSysConfig.getValue("REST_TOKEN_SECRET", "");
+		Mac mac = Mac.getInstance("HmacSHA512");
+		mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA512"));
+		String sig = enc.encodeToString(mac.doFinal(data.getBytes(StandardCharsets.UTF_8)));
+
+		return data + "." + sig;
+	}
+
+	private int parseSessionId(String json) {
+		if (json == null) return -1;
+		int idx = json.indexOf("\"sessionId\"");
+		if (idx < 0) return -1;
+		idx = json.indexOf(":", idx) + 1;
+		StringBuilder sb = new StringBuilder();
+		for (int i = idx; i < json.length(); i++) {
+			char c = json.charAt(i);
+			if (Character.isDigit(c)) sb.append(c);
+			else if (sb.length() > 0) break;
+		}
+		return sb.length() > 0 ? Integer.parseInt(sb.toString()) : -1;
+	}
+}
